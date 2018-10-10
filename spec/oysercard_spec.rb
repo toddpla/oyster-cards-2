@@ -1,6 +1,6 @@
 require 'oystercard'
 describe Oystercard do
-
+  let (:station) {double :station}
   describe '#balance' do
     it 'new card should have zero balance' do
       expect(subject.balance).to eq 0
@@ -24,7 +24,7 @@ describe Oystercard do
       expect(subject).not_to be_in_journey
     end
     it 'is true' do
-      subject.instance_variable_set(:@in_journey, true)
+      subject.instance_variable_set(:@entry_station, station)
       expect(subject).to be_in_journey
     end
   end
@@ -32,13 +32,20 @@ describe Oystercard do
   describe '#touch_in' do
     it 'start journey' do
       subject.instance_variable_set(:@balance, 10)
-      subject.touch_in
+      subject.touch_in(station)
       expect(subject).to be_in_journey
     end
 
     it 'raise error if balance is below min' do
-      expect { subject.touch_in }.to raise_error "Not enough money"
+      expect { subject.touch_in(station) }.to raise_error "Not enough money"
     end
+
+    it 'should record entry station' do
+      subject.instance_variable_set(:@balance, 10)
+      subject.touch_in(station)
+      expect(subject.entry_station).to eq station
+    end
+
   end
 
   describe '#touch_out' do
@@ -51,7 +58,5 @@ describe Oystercard do
       expect { subject.touch_out }.to change{ subject.balance }.by(-Oystercard::MIN_FARE)
     end
   end
-
-  describe '#min_'
 
 end
