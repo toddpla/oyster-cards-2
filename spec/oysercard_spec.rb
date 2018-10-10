@@ -19,14 +19,6 @@ describe Oystercard do
     end
   end
 
-  describe '#deduct' do
-    it 'should deduct money from balance' do
-      subject.instance_variable_set(:@balance, 10)
-      subject.deduct(1)
-      expect(subject.balance).to eq 9
-    end
-  end
-
   describe '#in_journey?' do
     it 'is false' do
       expect(subject).not_to be_in_journey
@@ -53,6 +45,10 @@ describe Oystercard do
     it 'ends journey' do
       subject.touch_out
       expect(subject).not_to be_in_journey
+    end
+
+    it 'deducts the minimum fare' do
+      expect { subject.touch_out }.to change{ subject.balance }.by(-Oystercard::MIN_FARE)
     end
   end
 
