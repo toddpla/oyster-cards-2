@@ -27,4 +27,28 @@ describe Oystercard do
     end
   end
 
+  describe '#in_journey?' do
+    it 'is false' do
+      expect(subject).not_to be_in_journey
+    end
+    it 'is true' do
+      subject.instance_variable_set(:@in_journey, true)
+      expect(subject).to be_in_journey
+    end
+  end
+
+  describe '#touch_in' do
+    it 'start journey' do
+      subject.touch_in
+      expect(subject).to be_in_journey
+    end
+  end
+
+  describe '#touch_out' do
+    it 'ends journey' do
+      subject.touch_out
+      expect(subject).not_to be_in_journey
+    end
+  end
+
 end
