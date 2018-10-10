@@ -43,8 +43,9 @@ describe Oystercard do
   end
 
   describe '#touch_out' do
-    it 'adds one jounrney to history' do
+    it 'adds one journey to history' do
       allow(journey).to receive(:finish)
+      allow(journey).to receive(:in_journey?).and_return(false)
       subject.instance_variable_set(:@journey, journey)
       subject.touch_out(station)
       expect(subject.journeys.length).to eq 1
@@ -52,12 +53,14 @@ describe Oystercard do
 
     it 'deducts the minimum fare' do
       allow(journey).to receive(:finish)
+      allow(journey).to receive(:in_journey?).and_return(false)
       subject.instance_variable_set(:@journey, journey)
       expect { subject.touch_out(station) }.to change{ subject.balance }.by(-Oystercard::MIN_FARE)
     end
 
     it 'creates one journey after touching out' do
       allow(journey).to receive(:finish).and_return(journey)
+      allow(journey).to receive(:in_journey?).and_return(false)
       subject.instance_variable_set(:@journey, journey)
       subject.touch_out(station)
       expect(subject.journeys[0]).to be journey
@@ -67,6 +70,14 @@ describe Oystercard do
   describe '#journeys' do
     it 'should be empty array by default' do
       expect(subject.journeys).to eq []
+    end
+  end
+
+  describe '#fare' do
+    it 'should return minimum fare' do
+      subject.instance_variable_set(:@journey, journey)
+      allow(journey).to receive(:in_journey?).and_return(false)
+      expect(subject.fare).to eq Oystercard::MIN_FARE
     end
   end
 

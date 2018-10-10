@@ -21,8 +21,15 @@ class Oystercard
   end
 
   def touch_out(station)
-    deduct(MIN_FARE)
     @journeys << @journey.finish(station)
+    deduct(fare)
+    @journey = nil
+  end
+
+  def fare
+    return 6 if @journey == nil
+    return 6 if @journey.in_journey?
+    MIN_FARE
   end
 
   private
