@@ -1,6 +1,9 @@
 require 'oystercard'
 describe Oystercard do
+
   let (:station) {double :station}
+  let (:journey) {double :journey}
+
   describe '#balance' do
     it 'new card should have zero balance' do
       expect(subject.balance).to eq 0
@@ -19,53 +22,46 @@ describe Oystercard do
     end
   end
 
-  describe '#in_journey?' do
-    it 'is false' do
-      expect(subject).not_to be_in_journey
-    end
-    it 'is true' do
-      subject.instance_variable_set(:@entry_station, station)
-      expect(subject).to be_in_journey
-    end
-  end
-
   describe '#touch_in' do
     it 'start journey' do
       subject.instance_variable_set(:@balance, 10)
       subject.touch_in(station)
-      expect(subject).to be_in_journey
+      expect(subject.journey).to be_in_journey
     end
 
     it 'raise error if balance is below min' do
       expect { subject.touch_in(station) }.to raise_error "Not enough money"
     end
 
+    # this test relies on the Journey Class  X X X X X
     it 'should record entry station' do
       subject.instance_variable_set(:@balance, 10)
       subject.touch_in(station)
-      expect(subject.entry_station).to eq station
+      expect(subject.journey.entry_station).to eq station
     end
 
   end
 
   describe '#touch_out' do
-    it 'ends journey' do
+    it 'adds one jounrney to history' do
+      allow(journey).to receive(:finish)
+      subject.instance_variable_set(:@journey, journey)
       subject.touch_out(station)
-      expect(subject).not_to be_in_journey
+      expect(subject.journeys.length).to eq 1
     end
 
     it 'deducts the minimum fare' do
+      allow(journey).to receive(:finish)
+      subject.instance_variable_set(:@journey, journey)
       expect { subject.touch_out(station) }.to change{ subject.balance }.by(-Oystercard::MIN_FARE)
     end
 
     it 'creates one journey after touching out' do
-      subject.instance_variable_set(:@entry_station, station)
+      allow(journey).to receive(:finish).and_return(journey)
+      subject.instance_variable_set(:@journey, journey)
       subject.touch_out(station)
-      expect(subject.journeys.length).to be 1
-      journey = {'Entry Station' => station, 'Exit Station' => station}
-      expect(subject.journeys[0]).to eq journey
+      expect(subject.journeys[0]).to be journey
     end
-
   end
 
   describe '#journeys' do
