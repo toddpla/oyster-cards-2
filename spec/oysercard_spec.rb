@@ -39,8 +39,13 @@ describe Oystercard do
 
   describe '#touch_in' do
     it 'start journey' do
+      subject.instance_variable_set(:@balance, 10)
       subject.touch_in
       expect(subject).to be_in_journey
+    end
+
+    it 'raise error if balance is below min' do
+      expect { subject.touch_in }.to raise_error "Not enough money"
     end
   end
 
@@ -50,5 +55,7 @@ describe Oystercard do
       expect(subject).not_to be_in_journey
     end
   end
+
+  describe '#min_'
 
 end
