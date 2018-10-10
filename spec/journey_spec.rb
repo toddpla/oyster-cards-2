@@ -4,15 +4,28 @@ describe Journey do
 
   let (:station) {double :station}
 
-  describe '#in_journey?' do
-    it 'is true when journey started but not finished' do
-      journey = Journey.new(station)
-      expect(journey).to be_in_journey
+    context 'given an entry station' do
+    subject {described_class.new(station)}
+
+    describe '#in_journey?' do
+      it 'is true when journey started but not finished' do
+        expect(subject).to be_in_journey
+      end
+      it 'is false when journey started and finished' do
+        subject.finish(station)
+        expect(subject).not_to be_in_journey
+      end
     end
-    it 'is false when journey started and finished' do
-      journey = Journey.new(station)
-      journey.finish(station)
-      expect(journey).not_to be_in_journey
+
+    context 'and an exit station' do
+      before(:each) do
+        subject.instance_variable_set(:@exit_station, station)
+      end
+      describe '#fare' do
+        it 'should return minimum fare' do
+          expect(subject.fare).to eq Journey::MIN_FARE
+        end
+      end
     end
   end
 end
