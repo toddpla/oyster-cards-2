@@ -50,12 +50,27 @@ describe Oystercard do
 
   describe '#touch_out' do
     it 'ends journey' do
-      subject.touch_out
+      subject.touch_out(station)
       expect(subject).not_to be_in_journey
     end
 
     it 'deducts the minimum fare' do
-      expect { subject.touch_out }.to change{ subject.balance }.by(-Oystercard::MIN_FARE)
+      expect { subject.touch_out(station) }.to change{ subject.balance }.by(-Oystercard::MIN_FARE)
+    end
+
+    it 'creates one journey after touching out' do
+      subject.instance_variable_set(:@entry_station, station)
+      subject.touch_out(station)
+      expect(subject.journeys.length).to be 1
+      journey = {'Entry Station' => station, 'Exit Station' => station}
+      expect(subject.journeys[0]).to eq journey
+    end
+
+  end
+
+  describe '#journeys' do
+    it 'should be empty array by default' do
+      expect(subject.journeys).to eq []
     end
   end
 
