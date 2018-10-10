@@ -17,8 +17,14 @@ describe Oystercard do
       message = "Exceeds maximum balance (#{Oystercard::MAX_BALANCE})"
       expect { subject.top_up(91) }.to raise_error(message)
     end
-
   end
 
+  describe '#deduct' do
+    it 'should deduct money from balance' do
+      subject.instance_variable_set(:@balance, 10)
+      subject.deduct(1)
+      expect(subject.balance).to eq 9
+    end
+  end
 
 end
