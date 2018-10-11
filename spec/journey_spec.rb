@@ -2,10 +2,11 @@ require 'journey'
 
 describe Journey do
 
+
   let (:station) {double :station}
 
     context 'given an entry station' do
-    subject {described_class.new(station)}
+    subject {described_class.new(entry_station: station)}
 
     describe '#in_journey?' do
       it 'is true when journey started but not finished' do

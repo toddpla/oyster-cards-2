@@ -2,12 +2,13 @@ class JourneyLog
 
   attr_reader :current_journey, :journeys
 
-  def initialize(station)
-    start(station)
+  def initialize(journey_class:)
+    @journey_class = journey_class
+    @journeys = []
   end
 
   def start(station)
-    current_journey(station)
+    @current_journey = journey_class.new(entry_station: station)
   end
 
   def finish(station)
@@ -17,12 +18,8 @@ class JourneyLog
 
   private
 
-  def current_journey(station)
-    if @current_journey == nil
-      @current_journey = Journey.new(station)
-    else
-      @current_journey
-    end  
+  def current_journey
+    @current_journey ||= journey_class.new
   end
 
 end

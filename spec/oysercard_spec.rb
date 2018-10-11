@@ -23,10 +23,13 @@ describe Oystercard do
   end
 
   describe '#touch_in' do
+
     it 'start journey' do
       subject.instance_variable_set(:@balance, 10)
+      subject.instance_variable_set(:@journey_log, journey_log)
+      allow(journey_log).to receive(:start)
+      expect(journey_log).to receive(:start)
       subject.touch_in(station)
-      expect(subject.journey_log.current_journey).to be_in_journey
     end
 
     it 'raise error if balance is below min' do
@@ -34,11 +37,12 @@ describe Oystercard do
     end
 
     # this test relies on the Journey Class  X X X X X
-    it 'should record entry station' do
+    it 'should start journey log' do
       subject.instance_variable_set(:@balance, 10)
+      subject.instance_variable_set(:@journey_log, journey_log)
+      allow(journey_log).to receive(:start)
+      expect(subject.journey_log).to receive(:start)
       subject.touch_in(station)
-      # expect(subject.journey.entry_station).to eq station
-      expect(subject.journey_log.current_journey.entry_station).to eq station
     end
 
   end
@@ -46,9 +50,10 @@ describe Oystercard do
   describe '#touch_out' do
     it 'deducts the minimum fare' do
       allow(journey_log).to receive(:finish)
-      allow(journey).to receive(:in_journey?).and_return(false)
-      allow(journey).to receive(:fare).and_return(Oystercard::MIN_FARE)
-      subject.instance_variable_set(:@journey, journey)
+      current_journey = double :current_journey, fare: 1
+      allow(current_journey).to receive(:fare).and_return(1)
+      allow(journey_log).to receive(:current_journey).and_return(current_journey)#.and_return(Oystercard::MIN_FARE)
+      subject.instance_variable_set(:@journey_log, journey_log)
       expect { subject.touch_out(station) }.to change{ subject.balance }.by(-Oystercard::MIN_FARE)
     end
   end

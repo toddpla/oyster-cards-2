@@ -4,7 +4,8 @@ describe JourneyLog do
 
 let(:station) { double(:station) }
 let(:journey) { double(:journey) }
-subject {described_class.new(station)}
+let(:journey_class) { double(:journey_class)}
+subject {described_class.new(journey_class: journey_class)}
 
     describe "#journeys" do
       it 'returns an array of journeys' do
