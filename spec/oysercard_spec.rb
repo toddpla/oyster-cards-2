@@ -26,7 +26,7 @@ describe Oystercard do
     it 'start journey' do
       subject.instance_variable_set(:@balance, 10)
       subject.touch_in(station)
-      expect(subject.journey).to be_in_journey
+      expect(subject.journey_log.current_journey).to be_in_journey
     end
 
     it 'raise error if balance is below min' do
@@ -37,7 +37,8 @@ describe Oystercard do
     it 'should record entry station' do
       subject.instance_variable_set(:@balance, 10)
       subject.touch_in(station)
-      expect(subject.journey.entry_station).to eq station
+      # expect(subject.journey.entry_station).to eq station
+      expect(subject.journey_log.current_journey.entry_station).to eq station
     end
 
   end
