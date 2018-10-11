@@ -8,7 +8,7 @@ class Oystercard
 
   def initialize
     @balance = 0
-    @journeys = []
+    # @journeys = []
     @journey_log = nil
   end
 
@@ -27,9 +27,8 @@ class Oystercard
   end
 
   def touch_out(station)
-    @journeys << @journey.finish(station)
+    @journey_log.finish(station)
     deduct(@journey.fare)
-    @journey = nil
   end
 
   private

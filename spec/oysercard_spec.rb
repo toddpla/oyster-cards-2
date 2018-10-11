@@ -2,7 +2,7 @@ require 'oystercard'
 describe Oystercard do
 
   let (:station) {double :station}
-  let (:journey) {double :journey}
+  let (:journey_log) {double :journey_log}
 
   describe '#balance' do
     it 'new card should have zero balance' do
@@ -44,39 +44,13 @@ describe Oystercard do
   end
 
   describe '#touch_out' do
-    it 'adds one journey to history' do
-      allow(journey).to receive(:finish)
-      allow(journey).to receive(:in_journey?).and_return(false)
-      allow(journey).to receive(:fare).and_return(1)
-      subject.instance_variable_set(:@journey, journey)
-      subject.touch_out(station)
-      expect(subject.journeys.length).to eq 1
-    end
-
     it 'deducts the minimum fare' do
-      allow(journey).to receive(:finish)
+      allow(journey_log).to receive(:finish)
       allow(journey).to receive(:in_journey?).and_return(false)
       allow(journey).to receive(:fare).and_return(Oystercard::MIN_FARE)
       subject.instance_variable_set(:@journey, journey)
       expect { subject.touch_out(station) }.to change{ subject.balance }.by(-Oystercard::MIN_FARE)
     end
-
-    it 'creates one journey after touching out' do
-      allow(journey).to receive(:finish).and_return(journey)
-      allow(journey).to receive(:in_journey?).and_return(false)
-      allow(journey).to receive(:fare).and_return(1)
-      subject.instance_variable_set(:@journey, journey)
-      subject.touch_out(station)
-      expect(subject.journeys[0]).to be journey
-    end
   end
-
-  describe '#journeys' do
-    it 'should be empty array by default' do
-      expect(subject.journeys).to eq []
-    end
-  end
-
-
 
 end
